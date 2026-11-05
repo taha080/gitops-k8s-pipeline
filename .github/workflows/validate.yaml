@@ -1,0 +1,38 @@
+name: Validate manifests
+
+# Validates Kustomize overlays whenever manifests change. This workflow
+# never builds, pushes or commits anything, so the CI bot's own overlay
+# updates cannot trigger a loop through it.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "k8s/**"
+      - ".github/workflows/validate.yaml"
+  pull_request:
+    paths:
+      - "k8s/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Validate manifests parse as YAML
+        run: python3 -c "import glob, yaml; [yaml.safe_load(open(f)) for f in glob.glob('k8s/**/*.yaml', recursive=True)]; print('manifests OK')"
+
+      - name: Install kustomize
+        run: |
+          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.1/kustomize_v5.7.1_linux_amd64.tar.gz" -o /tmp/kustomize.tar.gz
+          tar -xzf /tmp/kustomize.tar.gz -C /tmp
+          sudo install -m 755 /tmp/kustomize /usr/local/bin/kustomize
+          kustomize version
+
+      - name: Build both Kustomize overlays
+        run: |
+          kustomize build k8s/overlays/dev
+          kustomize build k8s/overlays/prod
