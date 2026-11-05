@@ -4,8 +4,11 @@ namespace: demo
 resources:
   - ../../base
 namePrefix: dev-
-commonLabels:
-  env: dev
+labels:
+  - pairs:
+      env: dev
+    includeSelectors: true
+    includeTemplates: true
 images:
   - name: ghcr.io/taha080/gitops-k8s-pipeline-demo
     newTag: dev
