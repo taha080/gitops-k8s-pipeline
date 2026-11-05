@@ -10,7 +10,7 @@ commonLabels:
   env: prod
 images:
   - name: ghcr.io/taha080/gitops-k8s-pipeline-demo
-    newTag: dev
+    newTag: sha-59c85fd5aaab795ecda4493260048e399e5734ad
 patches:
   - target:
       kind: Deployment
@@ -18,4 +18,4 @@ patches:
     patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/env/0/value
-        value: dev
+        value: sha-59c85fd5aaab795ecda4493260048e399e5734ad
