@@ -6,8 +6,11 @@ resources:
 replicas:
   - name: demo
     count: 2
-commonLabels:
-  env: prod
+labels:
+  - pairs:
+      env: prod
+    includeSelectors: true
+    includeTemplates: true
 images:
   - name: ghcr.io/taha080/gitops-k8s-pipeline-demo
     newTag: sha-59c85fd5aaab795ecda4493260048e399e5734ad
